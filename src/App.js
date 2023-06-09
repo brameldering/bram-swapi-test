@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import LoadingIndicator from "./components/UI/LoadingIndicator";
 
 import MoviesList from "./components/MoviesList";
@@ -9,11 +9,12 @@ function App() {
   const [isLoading, setIsloading] = useState(false);
   const [error, setError] = useState(null);
 
-  async function fetchMoviesHandler() {
+  const fetchMoviesHandler = useCallback(async () => {
     setIsloading(true);
     setError(null);
+    console.log("fetchMoviesHandler");
     try {
-      const response = await fetch("https://swapi.dev/api/film/");
+      const response = await fetch("https://swapi.dev/api/films/");
       if (!response.ok) {
         throw new Error("Error processing: " + response.status);
       }
@@ -34,7 +35,13 @@ function App() {
       setError(error.message);
       setIsloading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    console.log("useEffect called");
+
+    fetchMoviesHandler();
+  }, [fetchMoviesHandler]);
 
   // Identify which content to show
   let content = <p>No movies to show...</p>;
